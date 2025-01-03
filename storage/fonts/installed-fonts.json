@@ -1,0 +1,11 @@
+{
+    "roboto": {
+        "italic": "C:\\OSPanel\\domains\\edusystem\\storage\\fonts\/roboto_italic_e3ef71c7d9eeac822fc7d92d4fc7ff6e",
+        "500_italic": "C:\\OSPanel\\domains\\edusystem\\storage\\fonts\/roboto_500_italic_e69cd621b57d68ed0b47f09bd22a3d7e",
+        "bold_italic": "C:\\OSPanel\\domains\\edusystem\\storage\\fonts\/roboto_bold_italic_76e4a6bfadf19fea9990a367967a3f96",
+        "normal": "C:\\OSPanel\\domains\\edusystem\\storage\\fonts\/roboto_normal_7bc701b343c10631f60048716b96e4f7",
+        "500": "C:\\OSPanel\\domains\\edusystem\\storage\\fonts\/roboto_500_5774d6fb05eba3d096525f821dbe4137",
+        "bold": "C:\\OSPanel\\domains\\edusystem\\storage\\fonts\/roboto_bold_8db5cb5d0586c1e891426d13097b1d04",
+        "900": "roboto_900_7bf41cacaff90e7097ddd49fb9296601"
+    }
+}

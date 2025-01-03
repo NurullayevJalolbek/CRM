@@ -1,0 +1,1 @@
+[11-Sep-2024 10:49:36 Asia/Tashkent] PHP Fatal error:  Trait "Illuminate\Foundation\Auth\AuthenticatesUsers" not found in /home/alfaposu/magistr.alfapos.uz/app/Http/Controllers/Auth/LoginController.php on line 14
