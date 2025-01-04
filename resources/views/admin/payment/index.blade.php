@@ -148,6 +148,8 @@ To'lov tarixi
                                                 <button type="button" class="btn btn-sm btn-warning rounded px-3 mx-2 text-white" data-bs-toggle="modal" data-bs-target="#ustozModal" data-payment-id="{{ $payment->id }}">
                                                     <i class="feather-dollar"></i> Ustozga berish
                                                 </button>
+                                                @if (auth()->user()->hasRole(['Supper admin', 'Admin']))
+
                                                 <form action="{{ route('payments.delete', $payment->id) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
@@ -155,6 +157,8 @@ To'lov tarixi
                                                         <i class="feather-trash"></i> O'chirish
                                                     </button>
                                                 </form>
+
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>

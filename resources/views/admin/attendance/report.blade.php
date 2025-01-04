@@ -82,27 +82,27 @@
                             <div class="page-header">
                                 <div class="row align-items-center">
                                     <div class="col">
-                                        <h6 class="page-title" style="color: rgb(68, 67, 67)"
-                                            style="font-size: 5px !important">
+                                        <h6 class="page-title" style="color: #444; font-size: 14px; line-height: 1.5; margin-bottom: 0;">
                                             @if ($selectedGroup)
-                                                <small>Guruh: <b>{{ $selectedGroup->name }}</b></small> <br>
-                                                <small>
-                                                    {{ $selectedMonth['year'] }}-yil <b>{{ $selectedMonthName }} </b> oy
-                                                    uchun
-                                                    davomat
-                                                </small>
+                                                <span style="display: block; font-weight: 600; font-size: 16px; color: #333;">
+                                                    Guruh: <b>{{ $selectedGroup->name }}</b>
+                                                </span>
+                                                <span style="font-size: 14px; color: #555;">
+                                                    {{ $selectedMonth['year'] }}-yil <b>{{ $selectedMonthName }}</b> oy uchun davomat
+                                                </span>
                                             @endif
-
                                         </h6>
-                                        
-                                          <a href="{{ route('attendance.downloadPdf', ['group_id' => $selectedGroupId, 'year' => $selectedMonth['year'], 'month' => $selectedMonth['month']]) }}" class="btn btn-primary mx-5">
-                                             PDF yuklash
+                                    </div>
+                                    <div class="col-auto">
+                                        <a href="{{ route('attendance.downloadPdf', ['group_id' => $selectedGroupId, 'year' => $selectedMonth['year'], 'month' => $selectedMonth['month']]) }}" 
+                                           class="btn btn-primary"
+                                           style="font-size: 14px; padding: 8px 16px; background-color: #007bff; border-color: #007bff;">
+                                           PDF yuklash
                                         </a>
                                     </div>
-
                                 </div>
                             </div>
-
+                            
 
                             @if (session('success'))
                                 <div class="alert alert-success alert-dismissible show fade">
@@ -141,6 +141,9 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @php
+                                            $totalPaidByAllStudents = 0; // Initialize total payment accumulator
+                                        @endphp
                                         @foreach ($students as $student)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
@@ -160,7 +163,7 @@
                                                         @else
                                                             <span>Talaba raqami: No phone number available</span><br>
                                                         @endif
-                                    
+                            
                                                         @if ($student->parent_number)
                                                             <span>Ota-ona raqami: {{ $student->parent_number }}</span>
                                                         @else
@@ -170,17 +173,16 @@
                                                 </td>
                                                 <td>
                                                     @php
-                                                        $formattedMonth = sprintf('%02d', $selectedMonth['month']); // Format month with leading zero if needed
-                                                        $paymentMonth = "{$selectedMonth['year']}-{$formattedMonth}"; // Construct formatted year-month (e.g., '2024-02')
+                                                        $formattedMonth = sprintf('%02d', $selectedMonth['month']);
+                                                        $paymentMonth = "{$selectedMonth['year']}-{$formattedMonth}";
                                                         $studentPayments = $student->payments
                                                             ->where('group_id', $selectedGroupId)
                                                             ->where('payment_month', $paymentMonth);
-
                                                         $totalPaidAmount = $studentPayments->sum('paid_amount');
-
                                                         $groupPrice = $selectedGroup->price;
+                                                        $totalPaidByAllStudents += $totalPaidAmount; // Accumulate total payments
                                                     @endphp
-
+                            
                                                     @if ($totalPaidAmount >= $groupPrice)
                                                         <b class="text-success">
                                                             {{ number_format($totalPaidAmount) }} so'm</b>
@@ -189,45 +191,45 @@
                                                             {{ number_format($totalPaidAmount) }} so'm</b>
                                                     @endif
                                                 </td>
-
-
-
-
+                            
                                                 @foreach ($distinctDates as $date)
                                                     <td>
                                                         @php
-                                                            // Retrieve the attendance record for the student on the current date
                                                             $attendance = $student
                                                                 ->attendances()
                                                                 ->where('group_id', $selectedGroupId)
                                                                 ->whereDate('attendance_date', $date)
                                                                 ->first();
-                                                            // Determine the attendance status
                                                             $attendanceStatus = $attendance
-                                                                ? ($attendance->status
-                                                                    ? 'Present'
-                                                                    : 'Absent')
+                                                                ? ($attendance->status ? 'Present' : 'Absent')
                                                                 : 'Not signed';
                                                         @endphp
-
+                            
                                                         @if ($attendanceStatus === 'Present')
                                                             <b class="text-success">Kelgan</b>
                                                         @elseif ($attendanceStatus === 'Absent')
                                                             <b class="text-danger">Kelmagan</b>
                                                         @else
-                                                            <b style="color: rgb(255, 166, 0)">Belgilanmagan</b>
+                                                            <b style="color: rgb(255, 166, 0)">Yo'q</b>
                                                         @endif
                                                     </td>
                                                 @endforeach
-
-                                                <td>{{ $student->attendancePercentage($selectedGroup, $selectedMonth) }}%
-                                                </td>
+                            
+                                                <td>{{ $student->attendancePercentage($selectedGroup, $selectedMonth) }}%</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="2"><b>Jami To'lov</b></td>
+                                            <td colspan="{{ count($distinctDates) + 2 }}">
+                                                <b class="text-primary">{{ number_format($totalPaidByAllStudents) }} so'm</b>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
-
+                            
 
 
 
