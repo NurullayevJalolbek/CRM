@@ -69,7 +69,7 @@ class PaymentController extends Controller
                 $query->where('payment_month', $formattedYearMonth);
             }
         ])
-        ->paginate(50); // Paginate the results
+        ->paginate(1000); // Paginate the results
     
         return view('admin.payment.unpaid', compact('students', 'groups', 'groupId', 'formattedYearMonth', 'paymentMonth'))
             ->with('user', auth()->user());
