@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Room;
+use App\Models\Student;
 use App\Models\Teacher;
 use App\Http\Requests\StoreTeacherRequest;
 use App\Http\Requests\UpdateTeacherRequest;
@@ -12,6 +13,7 @@ use App\Exports\TeachersExport;
 use App\Models\Group;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -90,7 +92,7 @@ class TeacherController extends Controller
         $totalGroupsCount = $teacher->groups()->where('status', 1)->count();
 
         // Count the number of soft deleted groups assigned to the teacher
-        $softDeletedGroupsCount =  $teacher->groups()->where('status', 0)->count();
+        $softDeletedGroupsCount = $teacher->groups()->where('status', 0)->count();
 
         // Calculate the total number of active students studying in the groups assigned to the teacher
         $totalActiveStudents = $teacher->groups->flatMap->students->count();
@@ -106,7 +108,6 @@ class TeacherController extends Controller
             'totalArchivedStudents' => $totalArchivedStudents,
         ])->with('user', auth()->user());
     }
-
 
 
     /**
@@ -190,4 +191,115 @@ class TeacherController extends Controller
 
         return view('admin.teachers.index', compact('teachers'))->with('user', auth()->user());
     }
+
+    public function statistics(): \Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
+    {
+        $teachersNumber = User::role('Teacher')->count();
+        $activeStudents = Student::where('status', 'active')->count();
+        $totalGroups = Group::where('status', 1)->count();
+        $teachers = User::role('Teacher')->get();
+
+        return view('admin.teachers.statistics', compact( 'activeStudents', 'totalGroups', 'teachers'))->with('user', auth()->user());
+
+    }
+
+
+    public function teacherGroup($teacherId): \Illuminate\Http\JsonResponse
+    {
+        // Foydalanuvchilar jadvalidan "Teacher" roliga ega foydalanuvchini olish
+        $teacherRoleId = DB::table('roles')->where('name', 'Teacher')->value('id');
+
+
+        // "Teacher" roliga ega foydalanuvchini olish
+        $teacherData = DB::table('users')
+            ->join('role_user', 'users.id', '=', 'role_user.user_id')
+            ->where('role_user.role_id', $teacherRoleId)
+            ->where('users.id', $teacherId)
+            ->select('users.id', 'users.name', 'users.email', 'users.created_at', 'users.subject_id')
+            ->first();
+
+
+        $teacherYear = date('Y', strtotime($teacherData->created_at));
+        $currentYear = date('Y');
+
+        $teacherWorkYears = range($teacherYear, $currentYear);
+
+        // Ma'lumotlarni qaytarish
+        return response()->json([
+            'teacherWorkYears' => $teacherWorkYears,
+            'teacherData' => $teacherData,
+        ]);
+    }
+
+    public function teacherYear(string $id, string $year)
+    {
+        // Foydalanuvchilar jadvalidan "Teacher" roliga ega foydalanuvchini olish
+        $teacherRoleId = DB::table('roles')->where('name', 'Teacher')->value('id');
+
+
+        // "Teacher" roliga ega foydalanuvchini olish
+        $teacherData = DB::table('users')
+            ->join('role_user', 'users.id', '=', 'role_user.user_id')
+            ->where('role_user.role_id', $teacherRoleId)
+            ->where('users.id', $id)
+            ->select('users.id', 'users.name', 'users.email', 'users.created_at', 'users.subject_id')
+            ->first();
+
+
+
+        // O'qituvchi dars berayotgan guruhlarning talabalarini olish
+        $students = DB::table('students')
+            ->join('group_student', 'students.id', '=', 'group_student.student_id')
+            ->join('groups', 'groups.id', '=', 'group_student.group_id')
+            ->join('subjects', 'subjects.id', '=', 'groups.subject_id')
+            ->where('subjects.id', $teacherData->subject_id)
+            ->whereYear('students.started_date', $year)
+            ->select(
+                DB::raw('MONTH(students.started_date) as month'),
+                DB::raw('COUNT(students.id) as student_count'),
+                'students.name',
+                'students.number',
+                'students.started_date',
+                'students.status'
+            )
+            ->groupBy('month', 'students.name', 'students.number', 'students.started_date', 'students.status') // Qo'shimcha ustunlarni guruhlash
+            ->orderBy('month')
+            ->get();
+
+
+//        dump($students);
+
+        // Oylarga statistikani to'plash va oy nomlarini qo'shish
+        $months = [
+            1 => 'Yanvar',
+            2 => 'Fevral',
+            3 => 'Mart',
+            4 => 'Aprel',
+            5 => 'May',
+            6 => 'Iyun',
+            7 => 'Iyul',
+            8 => 'Avgust',
+            9 => 'Sentabr',
+            10 => 'Oktabr',
+            11 => 'Noyabr',
+            12 => 'Dekabr',
+        ];
+
+        $monthStats = [];
+        for ($month = 1; $month <= 12; $month++) {
+            $stat = $students->firstWhere('month', $month);
+            $monthStats[] = [
+                'month' => $month,
+                'month_name' => $months[$month],
+                'student_count' => $stat ? $stat->student_count : 0,
+            ];
+        }
+
+        return response()->json([
+            'teacher' => $teacherData,
+            'year' => $year,
+            'months_statistics' => $monthStats,
+        ]);
+    }
+
 }

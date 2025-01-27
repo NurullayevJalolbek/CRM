@@ -28,14 +28,14 @@ class GroupController extends Controller
          $groups = Group::where('status', 1)
              ->orderByDesc('created_at') // Order groups by creation date in descending order
              ->get();
-     
+
          $groups->each(function ($group) {
              $group->numberOfStudents = $group->students()->where('status', 'active')->count();
          });
-     
+
          return view('admin.groups.index', compact('groups'))->with('user', auth()->user());
      }
-     
+
 
 
     /**
@@ -44,7 +44,7 @@ class GroupController extends Controller
     public function create()
     {
         $subjects = Subject::all();
-        $teachers = User::role('teacher')->get();
+        $teachers = User::role('Teacher')->get();
 
         return view('admin.groups.create', compact('subjects', 'teachers'))->with('user', auth()->user());
     }
@@ -70,25 +70,25 @@ class GroupController extends Controller
     public function show(string $id, Request $request)
     {
         $group = Group::findOrFail($id);
-    
+
         $monthNames = [
             1 => 'Yanvar', 2 => 'Fevral', 3 => 'Mart', 4 => 'Aprel',
             5 => 'May', 6 => 'Iyun', 7 => 'Iyul', 8 => 'Avgust',
             9 => 'Sentyabr', 10 => 'Oktyabr', 11 => 'Noyabr', 12 => 'Dekabr'
         ];
-    
+
         $selectedMonth = [
             'year' => $request->input('year'),
             'month' => $request->input('month'),
         ];
-    
+
         if (isset($selectedMonth['month']) && $selectedMonth['month'] !== '') {
             $monthName = $monthNames[$selectedMonth['month']];
         } else {
             // Handle the case where the 'month' key is not set or empty
             $monthName = 'Unknown'; // You can set a default value or handle the error accordingly
         }
-    
+
         // Retrieve distinct attendance dates for the selected year and month
         $distinctDates = Attendance::where('group_id', $group->id)
             ->whereYear('attendance_date', $selectedMonth['year'])
@@ -97,7 +97,7 @@ class GroupController extends Controller
             ->unique()
             ->sort()
             ->toArray();
-    
+
         // Fetch active students belonging to the group
         $students = [];
         if ($group->id && $selectedMonth['year'] && $selectedMonth['month']) {
@@ -105,12 +105,12 @@ class GroupController extends Controller
                             ->where('status', 'active')
                             ->get();
         }
-    
+
         $student = Student::first();
         $payments = Payment::where('group_id', $id)->latest()->paginate(20);
         return view('admin.groups.show', compact('group', 'students', 'distinctDates', 'selectedMonth', 'monthName', 'payments', 'student'))->with('user', auth()->user());
     }
-    
+
 
     public function archiveShow(string $id, Request $request)
     {

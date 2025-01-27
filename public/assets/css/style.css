@@ -1709,6 +1709,62 @@ button.bg-danger:hover {
     padding: 25px
 }
 
+/* Drop down  Teachers  */
+.teachers {
+    padding: 20px;
+    position: relative;
+}
+
+/* Drop down date  */
+.date {
+    position: relative;
+    padding: 25px;
+}
+
+.dropdown-btn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.dropdown-btn:hover {
+    background-color: #0056b3;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-content ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.dropdown-content li {
+    padding: 10px;
+    border-bottom: 1px solid #f1f1f1;
+    cursor: pointer;
+}
+
+.dropdown-content li:hover {
+    background-color: #f1f1f1;
+}
+
+
 .card-header {
     border-bottom: 1px solid #e6e6e6;
     padding: 1rem 1.5rem

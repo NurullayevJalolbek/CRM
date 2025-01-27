@@ -67,7 +67,7 @@
                                                 <option value="" style="padding: 10px; font-size: 16px;">
                                                     Ustoz tanlash
                                                 </option>
-                                                @foreach ($teachers as $teacher)
+                                            @foreach ($teachers as $teacher)
                                                     <option value="{{ $teacher->id }}"
                                                         style="padding: 10px; font-size: 16px;">{{ $teacher->name }}
                                                     </option>

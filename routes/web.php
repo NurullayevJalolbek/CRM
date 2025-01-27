@@ -54,7 +54,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/students/export', [ExportController::class, 'studentExport'])->name('studentExport.export');
     Route::get('/passive-students/export', [ExportController::class, 'passiveStudentExport'])->name('passiveStudentExport.export');
     Route::get('/archive-students/export', [ExportController::class, 'archiveStudentExport'])->name('archiveStudentExport.export');
-        Route::get('/attendance/download-pdf', [AttendanceController::class, 'downloadPdfReport'])->name('attendance.downloadPdf');
+    Route::get('/attendance/download-pdf', [AttendanceController::class, 'downloadPdfReport'])->name('attendance.downloadPdf');
 
 
     // user url
@@ -100,6 +100,11 @@ Route::middleware(['auth'])->group(function () {
 
     // teacher url
     Route::get('/teachers', [TeacherController::class, 'index'])->name('teachers.index');
+
+    Route::get('/teachers/statistics', [TeacherController::class, 'statistics'])->name('teachers.statistics');
+    Route::get('teachers/{id}/group', [TeacherController::class, 'teacherGroup'])->name('teachers.group');
+    Route::get('/teachers/{id}/year/{year}', [TeacherController::class, 'teacherYear'])->name('teachers.year');
+
     Route::get('/teachers/create', [TeacherController::class, 'create'])->name('teachers.create');
     Route::post('/teachers', [TeacherController::class, 'store'])->name('teachers.store');
     Route::get('/teachers/search', [TeacherController::class, 'searchTeacher'])->name('teachers.search');
@@ -108,7 +113,8 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/teachers/{id}', [TeacherController::class, 'update'])->name('teachers.update');
     Route::delete('/teachers/{id}', [TeacherController::class, 'destroy'])->name('teachers.delete');
 
-    // active student url 
+
+    // active student url
     Route::get('/students', [StudentController::class, 'index'])->name('students.index');
     Route::get('/students/create', [StudentController::class, 'create'])->name('students.create');
     Route::post('/students', [StudentController::class, 'store'])->name('students.store');

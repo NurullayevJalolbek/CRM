@@ -26,11 +26,13 @@ class StudentFactory extends Factory
             'name' => fake()->name,
             'number' => $this->faker->phoneNumber,
             'parent_name' => $this->faker->name,
+            'archived_at'=>  $this->faker->dateTimeBetween('2023-02-01', 'now'),
             'parent_number' => $this->faker->phoneNumber,
-            'started_date' => fake()->date(),
-            'subject_id' => $subjectId,
+            'started_date' => $this->faker->dateTimeBetween('2023-02-01', 'now'),
+            'subject_id' => 1,
+            'created_at' => $this->faker->dateTimeBetween('2023-02-01', 'now'),
             'status' => $this->faker->randomElement(['active', 'archive', 'passive']),
-            'notes' => $this->faker->paragraph($nbSentences = 10, $variableNbSentences = true),        
+            'notes' => $this->faker->paragraph($nbSentences = 10, $variableNbSentences = true),
         ];
     }
 }

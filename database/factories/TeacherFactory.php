@@ -25,6 +25,7 @@ class TeacherFactory extends Factory
             'email' => fake()->email,
             'number' => $this->faker->phoneNumber,
             'subject_id' => $subjectId,
+            'created_at' => now(),
         ];
     }
 }

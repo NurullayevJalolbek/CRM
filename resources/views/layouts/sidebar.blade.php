@@ -54,6 +54,7 @@
                         <ul>
                             <li><a href="{{ route('teachers.index') }}">Barcha ustozlar</a></li>
                             <li><a href="{{ route('teachers.create') }}">Ustoz qo'shish</a></li>
+                            <li><a href="{{ route('teachers.statistics') }}">Ustozlar statistikasi</a></li>
                         </ul>
                     </li>
                     <li class="submenu">
@@ -70,7 +71,7 @@
 
                 @endif
 
-                 
+
                 @if (auth()->user()->hasRole(['Supper admin', 'Admin', 'Teacher']))
 
 
@@ -85,9 +86,9 @@
                             <li><a href="{{ route('attendance.report') }}">Davomat hisoboti</a></li>
                         </ul>
                     </li>
-                    
+
                 @endif
-                
+
                                 @if (auth()->user()->hasRole(['Supper admin', 'Admin']))
 
 
@@ -99,10 +100,10 @@
                             </svg><span> To'lovlar</span> <span class="menu-arrow"></span></a>
                         <ul>
                             <li><a href="{{ route('payments.history') }}">To'lov qilish</a></li>
-                           
+
 
                             <li><a href="{{ route('payments.index') }}">To'lovlar tarixi</a></li>
-                           
+
                             <li><a href="{{ route('payments.unpaid') }}">To'lov qilmaganlar</a></li>
 
                         </ul>
@@ -116,7 +117,7 @@
                             </svg> <span>SMS</span></a>
                     </li>
 
-        
+
                 @endif
 
 
